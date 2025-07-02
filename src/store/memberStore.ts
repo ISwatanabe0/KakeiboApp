@@ -1,22 +1,43 @@
-import { create } from 'zustand';
-import { Member } from '../types';
+import { useState } from 'react';
+import { getAllMembers, addMember, updateMember, deleteMember } from '../db/db';
+import type { Member } from '../types/member';
 
-interface MemberState {
-  members: Member[];
-  setMembers: (members: Member[]) => void;
-  addMember: (member: Member) => void;
-  updateMember: (member: Member) => void;
-  removeMember: (memberId: number) => void;
+export function useMemberStore() {
+  const [members, setMembers] = useState<Member[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  // メンバー一覧を取得
+  const fetchMembers = async () => {
+    setLoading(true);
+    const data = await getAllMembers();
+    setMembers(data);
+    setLoading(false);
+  };
+
+  // メンバーを追加
+  const add = async (member: Omit<Member, 'id' | 'createdAt'>) => {
+    await addMember(member);
+    await fetchMembers();
+  };
+
+  // メンバーを編集
+  const update = async (member: Member) => {
+    await updateMember(member);
+    await fetchMembers();
+  };
+
+  // メンバーを削除
+  const remove = async (id: number) => {
+    await deleteMember(id);
+    await fetchMembers();
+  };
+
+  return {
+    members,
+    loading,
+    fetchMembers,
+    add,
+    update,
+    remove,
+  };
 }
-
-export const useMemberStore = create<MemberState>((set, get) => ({
-  members: [],
-  setMembers: (members) => set({ members }),
-  addMember: (member) => set((state) => ({ members: [...state.members, member] })),
-  updateMember: (member) => set((state) => ({
-    members: state.members.map((m) => (m.id === member.id ? member : m)),
-  })),
-  removeMember: (memberId) => set((state) => ({
-    members: state.members.filter((m) => m.id !== memberId),
-  })),
-}));
