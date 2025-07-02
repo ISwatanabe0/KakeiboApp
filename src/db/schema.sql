@@ -36,19 +36,17 @@ CREATE TABLE categories (
 );
 
 -- 支出記録
-CREATE TABLE expenses (
+CREATE TABLE IF NOT EXISTS expenses (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  group_id INTEGER NOT NULL,
-  category_id INTEGER NOT NULL,
-  amount INTEGER NOT NULL,     -- 円単位
-  date DATE NOT NULL,
-  event_name TEXT,             -- イベント名
-  venue TEXT,                  -- 会場
-  quantity INTEGER DEFAULT 1,  -- 購入数量(CD枚数等)
+  group_id INTEGER,
+  member_id INTEGER,
+  amount INTEGER,
+  category TEXT,
+  date TEXT,
   memo TEXT,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  created_at TEXT DEFAULT (datetime('now')),
   FOREIGN KEY (group_id) REFERENCES groups(id),
-  FOREIGN KEY (category_id) REFERENCES categories(id)
+  FOREIGN KEY (member_id) REFERENCES members(id)
 );
 
 -- 支出とメンバーの関連(複数推し対応)

@@ -1,16 +1,13 @@
 // 支出記録・分析用型定義
 export interface Expense {
   id: number;
-  groupId: number;
-  categoryId: number;
+  group_id: number | null;
+  member_id: number | null;
   amount: number;
+  category: string;
   date: string;
-  eventName?: string;
-  venue?: string;
-  quantity: number;
-  memo?: string;
-  members: ExpenseMember[];
-  createdAt: string;
+  memo: string | null;
+  created_at: string;
 }
 
 export interface ExpenseMember {
